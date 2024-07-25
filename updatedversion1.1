@@ -1,0 +1,97 @@
+local Players = game:GetService("Players")
+local MarketplaceService = game:GetService("MarketplaceService")
+
+-- Constants
+local CORRECT_KEY = "5ffZBf6mmLcTxP0ZLi38FAmUV4KpxKGb"
+local SUPPORTED_GAME_IDS = {
+    [6447798030] = "https://raw.githubusercontent.com/Nadir3709/RandomScript/main/FunkyFridayMobile",
+    [142823291] = "https://pastebin.com/raw/e89Mn4Ec",
+    [17625359962] = "https://raw.githubusercontent.com/tbao143/thaibao/main/TbaoHubRivals",
+    [1240123653] = "https://paste.ee/r/yJdlA",
+    [6403373529] = "https://rawscripts.net/raw/Slap-Battles-Open-source-for-9484",
+    [8204899140] = "https://api.luarmor.net/files/v3/loaders/af20be263a0859c236c989c9fb387233.lua",
+    [13127800756] = "https://raw.githubusercontent.com/RaCc0oN1/RobloxObf/main/MainHub"
+}
+
+-- Function to show a notification
+local function showNotification(message)
+    local player = Players.LocalPlayer
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "NotificationScreenGui"
+    screenGui.Parent = player:WaitForChild("PlayerGui")
+
+    local notification = Instance.new("TextLabel")
+    notification.Size = UDim2.new(0.5, 0, 0.1, 0)
+    notification.Position = UDim2.new(0.25, 0, 0.1, 0)
+    notification.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+    notification.TextColor3 = Color3.new(1, 1, 1)
+    notification.Text = message
+    notification.Font = Enum.Font.SourceSansBold
+    notification.TextSize = 24
+    notification.Parent = screenGui
+
+    -- Automatically remove the notification after 5 seconds
+    wait(5)
+    screenGui:Destroy()
+end
+
+-- Function to create the initial GUI
+local function createInitialGUI()
+    local player = Players.LocalPlayer
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "InitialScreenGui"
+    screenGui.Parent = player:WaitForChild("PlayerGui")
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0.5, 0, 0.3, 0)
+    frame.Position = UDim2.new(0.25, 0, 0.35, 0)
+    frame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+    frame.Parent = screenGui
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, 0, 0.2, 0)
+    titleLabel.Position = UDim2.new(0, 0, 0, 0)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.TextColor3 = Color3.new(1, 1, 1)
+    titleLabel.Text = "xyz.ware reworked | Funky Friday Mobile"
+    titleLabel.Font = Enum.Font.SourceSansBold
+    titleLabel.TextSize = 32
+    titleLabel.Parent = frame
+
+    local textBox = Instance.new("TextBox")
+    textBox.Size = UDim2.new(0.8, 0, 0.2, 0)
+    textBox.Position = UDim2.new(0.1, 0, 0.6, 0)
+    textBox.BackgroundColor3 = Color3.new(1, 1, 1)
+    textBox.TextColor3 = Color3.new(0, 0, 0)
+    textBox.PlaceholderText = "Enter key here"
+    textBox.Font = Enum.Font.SourceSans
+    textBox.TextSize = 24
+    textBox.Parent = frame
+
+    -- Handle the key entry
+    textBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed and textBox.Text == CORRECT_KEY then
+            -- Show correct key notification
+            showNotification("Correct key!")
+
+            -- Remove the notification and initial GUI after 4 seconds
+            wait(4)
+            screenGui:Destroy()
+
+            -- Load the main script based on the game ID
+            local mainScriptUrl = SUPPORTED_GAME_IDS[game.PlaceId]
+            if mainScriptUrl then
+                loadstring(game:HttpGet(mainScriptUrl))()
+            else
+                -- If the game ID is not supported, show a notification
+                showNotification("This game is not supported.")
+            end
+        else
+            textBox.Text = ""
+            textBox.PlaceholderText = "Invalid key, try again."
+        end
+    end)
+end
+
+-- Create the initial GUI
+createInitialGUI()
